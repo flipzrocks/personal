@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/base-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/grids-responsive-min.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Flipz</title>
+</head>
+<body>
+
+<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+        <div class="header">
+            <h1 class="brand-title">Jon Massari</h1>
+            <h2 class="brand-tagline">Personal + Projects</h2>
+
+            <nav class="nav">
+                <ul class="nav-list">
+                	<li class="nav-item">
+                		<a class="pure-button" href="/">Home</a>
+                	</li>
+                    <li class="nav-item">
+                        <a class="pure-button" target="_blank" href="https://www.linkedin.com/in/jonmassari/">LinkedIn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="pure-button" href="/me">Résumé</a>
+                    </li>
+                    <li class="nav-item">
+                    	<a class="pure-button" href="/rd2l">RD2L Scouting</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+     <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+        	<div>
+        		{% with messages = get_flashed_messages(with_categories=true) %}
+          			{% if messages %}
+            			{% for category, message in messages %}
+              				<div> class="alert alert-{{category}}"
+                				{{ message }}
+              				</div>
+            			{% endfor %}
+          			{% endif %}
+        		{% endwith %}
+        	</div>
+            <!-- A wrapper for all the page content -->
+            {% block content %}{% endblock %}
+
+            <div class="footer">
+                <div class="pure-menu pure-menu-horizontal">
+                    <ul>
+                        <li class="pure-menu-item"><a href="http://purecss.io/" class="pure-menu-link">About</a></li>
+                        <li class="pure-menu-item"><a href="http://twitter.com/yuilibrary/" class="pure-menu-link">Twitter</a></li>
+                        <li class="pure-menu-item"><a href="http://github.com/pure-css/pure/" class="pure-menu-link">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

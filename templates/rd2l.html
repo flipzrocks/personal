@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h1>RD2L Scouting Sheet</h1>
+
+  <div class="content-section">
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+      <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Scout 'em and route 'em.</legend>
+        <div class="form-group">
+          {{ form.team_select.label(class="form-control-label") }}
+          {{ form.team_select(class="form-control form-control-lg") }}
+        </div>
+        <div>
+          {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div>
+
+    <div class="col-md-8">
+      <h2>Heroes Played (7.30)</h2>
+      <table class="pure-table pure-table-bordered pure-table-striped">
+      {% for player in players %}
+        <thead>
+          <tr>
+            <th colspan="10">
+              <a href="https://www.opendota.com{{player[1]}}" target="_blank">{{ player[0] }}</a>
+            </th>
+          </tr>
+        </thead>
+        <tr>
+          <th>Hero</th>
+          {% for hero in player[2] %}
+            <td
+            {% if hero['games'] > 5 and hero['win'] / hero['games'] > 8/10 %}
+              class="bg-danger"
+            {% elif hero['games'] > 5 and hero['win'] / hero['games'] >= 6/10 %}
+              class="bg-warning"
+            {% endif %}
+            >{{ hero['hero'] }}</td>
+          }
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Games</th>
+          {% for hero in player[2] %}
+            <td>{{ hero['games'] }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Wins</th>
+          {% for hero in player[2] %}
+            <td>{{ hero['win'] }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+    </div>
+    <div>
+      <h2>Recent Drafts (Ticketed Only)</h2>
+      {% for match in matches %}
+        <table class="pure-g pure-u-5-12 pure-table pure-table-bordered pure-table-striped">
+          <thead>
+            <tr>
+              <th colspan="3">
+                <a href="https://www.opendota.com/matches/{{match['match_id']}}" target="_blank">{{ match['match_id'] }}</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for pick in match['picks_bans'] %}
+            <tr>
+              <td {% if pick['is_pick'] == False %} style="color:red" {% endif %}>
+                {% if pick['team'] == 1%}
+                  {{ heroes[pick['hero_id']|string] }}
+                  {% for player in match['players'] %}
+                    {% if player['hero_id'] == pick['hero_id'] %}
+                      ( <b>{{ player['personaname'] }}</b> )
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  ~
+                {% endif %}
+              </td>
+              <td>{{ pick['order'] + 1 }}</td>
+              <td {% if pick['is_pick'] == False %} style="color:red" {% endif %}>
+                {% if  pick['team'] == 0%}
+                  {{ heroes[pick['hero_id']|string] }}
+                  {% for player in match['players'] %}
+                    {% if player['hero_id'] == pick['hero_id'] %}
+                      ( <b>{{ player['personaname'] }}</b> )
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  ~
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

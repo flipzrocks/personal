@@ -41,7 +41,6 @@ for team in team_tds:
     if team.a != None:
 
         team_link=rd2l_base + str(team.a['href'])
-        print("Working on: " + team_link)
         team_soup = BeautifulSoup(requests.get(team_link, verify=False).content, 'html.parser')
         # Get all Player Info
         players=[]
@@ -58,20 +57,24 @@ for team in team_tds:
         for player in players:
             url = opendota_base + player[1] + heroes_footer
             response=requests.get(url)
-            player.append(response.json()[0:9])
-            for item in player[2]:
-                item["hero"] = heroes[int(item['hero_id'])]
+            if response.ok:
+                player.append(response.json()[0:9])
+                for item in player[2]:
+                    item["hero"] = heroes[int(item['hero_id'])]
 
         # Get Recent RD2L Drafts from Captain
         matches=[]
         drafts_footer = str(players[0][1]) + "/matches?lobby_type=1&date=30&game_mode=2" + api_key
         drafts=requests.get(opendota_base+drafts_footer)
-        for match in drafts.json():
-            match_id=str(match['match_id'])
-            match_endpoint="https://api.opendota.com/api/matches/" + match_id + "?api_key=beebcc94-9bf5-467a-bc7e-d4522ec0638f"
-            match_response=requests.get(match_endpoint)
-            if match_response.json()['leagueid'] == 13375:
-                matches.append(match_response.json())
+        if drafts.status_code == 200:
+            for match in drafts.json():
+                match_id=str(match['match_id'])
+                match_endpoint="https://api.opendota.com/api/matches/" + match_id + "?api_key=beebcc94-9bf5-467a-bc7e-d4522ec0638f"
+                match_response=requests.get(match_endpoint)
+                if "league_id" in match_response.json() and match_response.json()['leagueid'] == 13375:
+                    matches.append(match_response.json())
+        else:
+            print(str(players[0][1]) + " FUCKED UP RESPONSE, MAYBE TRY " + str(players[1][1]))
         team_header = team.a.text + team.span.text
         team_data = {
             'header':team_header,
